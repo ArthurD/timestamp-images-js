@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<title>Free Photo Watermark Utility (client-side & open source)</title>
+	</head>
+
+	<body>
+	  <h1>[Free] Client-Side Image Date/Time Watermark Utility</h1>
+		Adds the "time photo was taken" as a watermark on your image & removes EXIF data.  Useful for adding timestamps to photos & easily extensible.  Safe & secure because all 'work' is done in your browser -- nothing ever leaves your browser, data is never sent to any server.  <a href="https://github.com/ArthurD/timestamp-images-js">Free & open source</a>.<br><br>
+		Made possible thanks to: <a href="https://github.com/mattiasw/ExifReader">ExifReader library</a><br><br>	
+		<small>Small Note: internet is required just because  I was too lazy to pull the ExifReader lib into this repo, am just referencing it directly.  Your photos never get uploaded anywhere though, it's 100% local.</small> <br>
+		<br>
+		
+		<small>Test/Example Images to try it (right-click & select 'Save Link As'):  <a href="example-iphone-photo.jpeg">example-iphone-photo.jpeg</a> and <a href="example-iphone-photo.png">example-iphone-photo.png</a></small>
+		<br>
+	
+		<hr>
+		<h3>Settings & File Selection</h3>
+	    Extra Watermark Text: <input id="extraText" type="text" placeholder="optional" /><br />
+	    Font Size: <input id="fontSize" type="numeric" value="200" /><br /><br />
+    
+	    Select 1 or more Images (png, jpg, jpeg):
+	    <div class="picker">
+	      <input type="file" id="picker" name="fileList" accept=".jpg,.png,.jpeg" multiple></div>
+				<br>
+	      <small><b>Compatibility:</b> Tested with pictures taken on recent-ish iPhones.  Must be exported with EXIF data (location data NOT required).  EXIF data is fully removed from results.</small>
+	      <br>
+	      <b><a href="#" style="display: none;" id="downloadAllBtn" onclick="downloadAll()">Download All</a></b>
+				<hr>
+	    <ul id="listing">
+      
+	    </ul>
+    
+	    <canvas id="canvas"></canvas>
+	</body>
+
+  <script src="https://mattiasw.github.io/ExifReader/exif-reader.js"></script>
+  <script src="exif.js"></script>
+  <script>
+	  let picker = document.getElementById('picker');
+    picker.addEventListener('change', e => {
+      let x = Array.from(e.target.files);
+      if(x.length > 0) { 
+        document.getElementById('downloadAllBtn').style = "";
+      } else { 
+        document.getElementById('downloadAllBtn').style = "display: none;";
+      }
+    });
+    
+    
+    function downloadAll() { 
+      let links = document.getElementsByClassName('downloadLink');
+      for(let x=0; x<links.length; x++) { 
+        links[x].click();
+      }
+      console.log("got click");
+    }
+    
+  </script>
+</html>
