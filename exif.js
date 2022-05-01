@@ -27,8 +27,6 @@
 
     function handleFile(event) {
         let listing = document.getElementById("listing");
-        let xtraText = document.getElementById("extraText").value;
-        
         
         for(let fileID=0; fileID<event.target.files.length; fileID++) {
             ExifReader.load(event.target.files[fileID]).then(function (tags) {
@@ -54,7 +52,7 @@
                     console.log('found DateTime '+ date);
                 } 
                 if(date == null) {
-                    console.log('wtf no date found');
+                    console.log('no date found');
                 }
                 
                 if(Array.isArray(date)) { 
@@ -72,15 +70,20 @@
                 listItem.appendChild(canvas);
                 
                 
-                handleImage(canvas, event.target.files[fileID], date + (xtraText.length > 0 ? " "+xtraText : ""), listItem);
+                handleImage(canvas, event.target.files[fileID], date, listItem);
             }).catch(function (error) {
                 console.log('wtf', error);
             });
         }
     
-        function handleImage(canvas, imageFile, overlayText, listItem){
+        function handleImage(canvas, imageFile, dateAsText, listItem){
             let fontSize = document.getElementById("fontSize").value;
+            let fontColor = document.getElementById("fontColor").value;
+            let text = document.getElementById("txt").value;
             var ctx = canvas.getContext('2d');
+            
+            let position = document.getElementById("txtPos").value;
+
             
             var reader = new FileReader();
             reader.onload = function(event){
@@ -91,10 +94,22 @@
                     ctx.drawImage(img, 0, 0);
                     
     		        ctx.lineWidth = 16;
-    		        ctx.fillStyle = "#ffffff";
-    		        ctx.lineStyle = "#000000";
+    		        ctx.fillStyle = fontColor;
+    		        ctx.lineStyle = fontColor;
     		        ctx.font = fontSize+"px sans-serif";
-    		        ctx.fillText(overlayText, 15, img.height - 30);
+                    
+                    let finalTxt = text.replace('[d]', dateAsText);
+                    if(position === "btmLeft") { 
+                        ctx.fillText(finalTxt, 15, img.height - 30);
+                    } else if(position === "btmRight") { 
+                        ctx.fillText(finalTxt, img.width - (0.5 * fontSize * finalTxt.length), img.height - 30);
+                    } else if(position === "topRight") { 
+                        ctx.fillText(finalTxt, img.width - (0.5 * fontSize * finalTxt.length), fontSize);
+                    } else if(position === "topLeft") { 
+                        ctx.fillText(finalTxt, 15, fontSize);
+                    }
+                    
+    		        
                     
                     let listing = document.getElementById('listing');
                     

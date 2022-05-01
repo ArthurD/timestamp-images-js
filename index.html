@@ -2,7 +2,22 @@
 	<head>
 		<title>Free Photo Watermark Utility (client-side & open source)</title>
 	</head>
-
+  <style>
+    label { 
+      padding: 10px;
+      font-weight: bold;
+    }
+    input, select {
+      padding: 2px;
+      margin: 5px;
+    }
+    .settings {
+      border: 1px #CCCCCC solid;
+      max-width: 500px;
+      margin: 20px;
+    }
+    
+  </style>
 	<body>
 	  <h1>[Free] Client-Side Image Date/Time Watermark Utility</h1>
 		Adds the "time photo was taken" as a watermark on your image & removes EXIF data.  Useful for adding timestamps to photos & easily extensible.  Safe & secure because all 'work' is done in your browser -- nothing ever leaves your browser, data is never sent to any server.  <a href="https://github.com/ArthurD/timestamp-images-js">Free & open source</a>.<br><br>
@@ -15,12 +30,29 @@
 	
 		<hr>
 		<h3>Settings & File Selection</h3>
-	    Extra Watermark Text: <input id="extraText" type="text" placeholder="optional" /><br />
-	    Font Size: <input id="fontSize" type="numeric" value="200" /><br /><br />
+    <div class="settings">
+	    <label for="txt">Watermark Text <small>([d] = timestamp):</small></label> <input id="txt" type="text" value="[d]" /><br />
+      <label for="fontSize">Font Size:</label> <input id="fontSize" type="numeric" value="200" /><br />
+      <label for="fontColor">Font Color:</label> <input id="fontColor" type="text" value="#FFFFFF" /><br />
+      <label for="txtPos">Watermark Position:</label>
+      <select name="txtPos" id="txtPos">
+        <option value="btmLeft">Bottom Left</option>
+        <option value="topLeft">Top Left</option>
+        <option value="btmRight">Bottom Right</option>
+        <option value="topRight">Top Right</option>
+      </select>
+      <br /><br />
+    </div>
     
-	    Select 1 or more Images (png, jpg, jpeg):
+    <div class="settings">
+	    <label for="picker">
+        Select 1 or more Images <small>(png, jpg, jpeg)</small>:<br/>
+        <small style="margin-left: 25px; font-weight: normal;">Multi-select is allowed & enabled in file-picker dialog!</small>
+      </label>
 	    <div class="picker">
-	      <input type="file" id="picker" name="fileList" accept=".jpg,.png,.jpeg" multiple></div>
+	      <input type="file" id="picker" name="fileList" accept=".jpg,.png,.jpeg" multiple>
+      </div>
+    </div>
 				<br>
 	      <small><b>Compatibility:</b> Tested with pictures taken on recent-ish iPhones.  Must be exported with EXIF data (location data NOT required).  EXIF data is fully removed from results.</small>
 	      <br>
@@ -36,24 +68,42 @@
   <script src="https://mattiasw.github.io/ExifReader/exif-reader.js"></script>
   <script src="exif.js"></script>
   <script>
-	  let picker = document.getElementById('picker');
-    picker.addEventListener('change', e => {
-      let x = Array.from(e.target.files);
-      if(x.length > 0) { 
-        document.getElementById('downloadAllBtn').style = "";
+    
+    const DownloadsRequested = [];
+
+    // Ugly but whatever, its all client-side anyways
+    function checkEnableDownloadAllLink() {
+      let links = document.getElementsByClassName('downloadLink');
+      let btn = document.getElementById('downloadAllBtn');
+      if(links.length > 0) { 
+        btn.style = "";
+        btn.innerHTML = "Download All ("+links.length+")";
       } else { 
-        document.getElementById('downloadAllBtn').style = "display: none;";
+        btn.style = "display: none;";
+        btn.innerHTML = "Download All ("+links.length+")";
       }
-    });
+    }
     
-    
+    // Invoked 'download all' link is clicked
     function downloadAll() { 
       let links = document.getElementsByClassName('downloadLink');
       for(let x=0; x<links.length; x++) { 
-        links[x].click();
+        DownloadsRequested.push(links[x]);
       }
-      console.log("got click");
     }
+    
+    // Chrome appears to throttle download clicks -- so we queue them & download at a (tight) interval
+    function processDownloadQueue() { 
+      if(DownloadsRequested.length > 0) { 
+        DownloadsRequested.pop().click(); // download 1
+      }
+    }
+    
+    // Process queue every N timeframe
+    setInterval(function() {
+      checkEnableDownloadAllLink();
+      processDownloadQueue();
+    }, 250);
     
   </script>
 </html>
