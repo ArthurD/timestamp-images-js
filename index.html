@@ -45,8 +45,14 @@
         <option value="topLeft">Top Left</option>
         <option value="btmRight">Bottom Right</option>
         <option value="topRight">Top Right</option>
-      </select>
-      <br /><br />
+      </select><br />
+
+<!--      <label for="makeThumbnails">Make Thumbnails?</label> <input id="makeThumbnails" type="checkbox" value="true" /> <br />-->
+<!--      <span id="thumbsEnabled" style="display: none;">-->
+<!--        <label for="thumbnailSize">Thumbnail Size (%):</label> <input id="thumbnailSize" type="numeric" value="5%" /><br />-->
+<!--      </span>-->
+
+      <br />
     </div>
     
     <div class="settings">
@@ -58,57 +64,64 @@
 	      <input type="file" id="picker" name="fileList" accept=".jpg,.png,.jpeg" multiple>
       </div>
     </div>
-				<br>
-	      <small><b>Compatibility:</b> Tested with pictures taken on recent-ish iPhones.  Must be exported with EXIF data (location data NOT required).  EXIF data is fully removed from results.</small>
-	      <br>
-	      <b><a href="#" style="display: none;" id="downloadAllBtn" onclick="downloadAll()">Download All</a></b>
-				<hr>
-	    <ul id="listing">
-      
-	    </ul>
-    
-	    <canvas id="canvas"></canvas>
+      <button id="apply">Apply</button>
+      <br>
+	  <small><b>Compatibility:</b> Tested with pictures taken on recent-ish iPhones.  Must be exported with EXIF data (location data NOT required).  EXIF data is fully removed from results.</small>
+	  <br>
+	  <b><a href="#" style="display: none;" id="downloadAllBtn" onclick="downloadAll()">Download All</a></b>
+      <hr>
+	  <ul id="listing">
+      <!--    IMAGES WILL GO HERE      -->
+      </ul>
 	</body>
 
-  <script src="exif-reader.js"></script>
-  <script src="exif.js"></script>
-  <script>
-    
+    <script src="vendor/exif-reader.js"></script>
+    <script src="vendor/pica.js"></script>
+    <script src="exif.js"></script>
+    <script>
+
     const DownloadsRequested = [];
 
-    // Ugly but whatever, its all client-side anyways
+    window.addEventListener('load', function () {
+        // document.getElementById('makeThumbnails').addEventListener('change', function() {
+        //     let enabled = document.getElementById("makeThumbnails").checked;
+        //     document.getElementById("thumbsEnabled").style.display =  enabled ? "" : "none";
+        // }, false);
+    });
+
+    // Ugly but whatever, is purely client-side anyways
     function checkEnableDownloadAllLink() {
       let links = document.getElementsByClassName('downloadLink');
       let btn = document.getElementById('downloadAllBtn');
-      if(links.length > 0) { 
+      if(links.length > 0) {
         btn.style = "";
         btn.innerHTML = "Download All ("+links.length+")";
-      } else { 
+      } else {
         btn.style = "display: none;";
         btn.innerHTML = "Download All ("+links.length+")";
       }
     }
-    
+
     // Invoked 'download all' link is clicked
-    function downloadAll() { 
+    function downloadAll() {
       let links = document.getElementsByClassName('downloadLink');
-      for(let x=0; x<links.length; x++) { 
+      for(let x=0; x<links.length; x++) {
         DownloadsRequested.push(links[x]);
       }
     }
-    
+
     // Chrome appears to throttle download clicks -- so we queue them & download at a (tight) interval
-    function processDownloadQueue() { 
-      if(DownloadsRequested.length > 0) { 
+    function processDownloadQueue() {
+      if(DownloadsRequested.length > 0) {
         DownloadsRequested.pop().click(); // download 1
       }
     }
-    
+
     // Process queue every N timeframe
     setInterval(function() {
       checkEnableDownloadAllLink();
       processDownloadQueue();
     }, 250);
-    
+
   </script>
 </html>
