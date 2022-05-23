@@ -4,48 +4,100 @@
 	</head>
   <style>
     label { 
-      padding: 10px;
-      font-weight: bold;
+        padding: 10px;
+        font-weight: bold;
     }
     input, select {
-      padding: 2px;
-      margin: 5px;
+        padding: 2px;
+        margin: 5px;
     }
     .settings {
-      border: 1px #CCCCCC solid;
-      max-width: 500px;
-      margin: 20px;
+        border: 1px #CCCCCC solid;
+        max-width: 500px;
+        margin: 20px;
     }
-    
+    div.gallery {
+        margin: 5px;
+        border: 1px solid #ccc;
+        float: left;
+        width: 180px;
+    }
+    div.gallery:hover {
+        border: 1px solid #777;
+    }
+    div.gallery img {
+        width: 100%;
+        height: auto;
+    }
+    div.gallery canvas {
+        width: 100%;
+        height: auto;
+    }
+    div.desc {
+        padding: 5px;
+        text-align: center;
+        font-size: 12px;
+    }
+    .filename {
+        padding: 2px;
+        text-align: center;
+        font-size: 8px;
+    }
   </style>
 	<body>
-	  <h1>[Free] Client-Side Image Date/Time Watermark Utility</h1>
-		Adds the "time photo was taken" as a watermark on your image & removes EXIF data.  Useful for adding timestamps to photos & easily extensible.  Safe & secure because all 'work' is done in your browser -- nothing ever leaves your browser, data is never sent to any server.  <a href="https://github.com/ArthurD/timestamp-images-js">Free & open source</a>.<br><br>
-		Made possible thanks to: <a href="https://github.com/mattiasw/ExifReader">ExifReader library</a><br><br>	
-		<small>
-      Your photos never get uploaded anywhere, it's 100% local -- your browser does all of the processing!<br>
-      <b>If you find it useful, you can also checkout <a href="https://dantonio.info" title="Arthur D'Antonio III Personal Site">some of my other projects</a>!</b>  :)
-    </small> <br>
-    
-    
-		<br>
-		
-		<small>Test/Example Images to try it (right-click & select 'Save Link As'):  <a href="example-iphone-photo.jpeg">example-iphone-photo.jpeg</a> and <a href="example-iphone-photo.png">example-iphone-photo.png</a></small>
-		<br>
-	
-		<hr>
-		<h3>Settings & File Selection</h3>
+        <h1>[Free] Client-Side Image Date/Time Watermark Utility</h1>
+        Adds the "time photo was taken" as a watermark on your image & removes EXIF data.  Useful for adding timestamps to photos & easily extensible.  Safe & secure because all 'work' is done in your browser -- nothing ever leaves your browser, data is never sent to any server.  <a href="https://github.com/ArthurD/timestamp-images-js">Free & open source</a>.<br><br>
+        Made possible thanks to: <a href="https://github.com/mattiasw/ExifReader">ExifReader library</a><br><br>
+        <small>
+            Your photos never get uploaded anywhere, it's 100% local -- your browser does all of the processing!<br>
+            <b>
+            If you find it useful, you can also checkout <a href="https://dantonio.info" title="Arthur D'Antonio III Personal Site">some of my other projects</a>!</b>  :)
+            <br>
+            <b>Compatibility:</b>
+            Tested with pictures taken on recent-ish iPhones.  Must be exported with EXIF data (location data NOT required).
+            EXIF data is fully removed from results.
+            <br>
+        </small>
+        <br>
+
+    <br>
+    <small>Test/Example Images to try it (right-click & select 'Save Link As'):  <a href="example-iphone-photo.jpeg">example-iphone-photo.jpeg</a> and <a href="example-iphone-photo.png">example-iphone-photo.png</a></small>
+    <br>
+
+    <hr>
+    <h3>Settings & File Selection</h3>
     <div class="settings">
-	    <label for="txt">Watermark Text <small>([d] = timestamp):</small></label> <input id="txt" type="text" value="[d]" /><br />
-      <label for="fontSize">Font Size:</label> <input id="fontSize" type="numeric" value="200" /><br />
-      <label for="fontColor">Font Color:</label> <input id="fontColor" type="text" value="#FFFFFF" /><br />
-      <label for="txtPos">Watermark Position:</label>
-      <select name="txtPos" id="txtPos">
-        <option value="btmLeft">Bottom Left</option>
-        <option value="topLeft">Top Left</option>
-        <option value="btmRight">Bottom Right</option>
-        <option value="topRight">Top Right</option>
-      </select><br />
+
+        <label for="txt">Watermark Text <small>([d] = timestamp):</small></label>
+        <input id="txt" type="text" value="[d]" />
+        <br />
+
+        <label for="fontSize">Font Size:</label>
+        <input id="fontSize" type="numeric" value="200" />
+        <br />
+
+        <label for="fontColorFill">Font Fill:</label>
+        <input type="color" id="fontColorFill" type="text" value="#FFFFFF" />
+        <br />
+
+        <label for="fontColorStroke">Font Stroke:</label>
+        <input type="color" id="fontColorStroke" type="text" value="#FFFFFF" />
+        <br />
+
+        <label for="txtPos">Watermark Position:</label>
+        <select name="txtPos" id="txtPos">
+            <option value="btmLeft">Bottom Left</option>
+            <option value="topLeft">Top Left</option>
+            <option value="btmRight">Bottom Right</option>
+            <option value="topRight">Top Right</option>
+        </select>
+        <br />
+
+        <label for="txtPos">Sort Order:</label>
+        <select name="sortOrder" id="sortOrder">
+            <option value="date_desc">Date (Newest to Oldest)</option>
+            <option value="date_asc">Date (Oldest to Newest)</option>
+        </select>
 
 <!--      <label for="makeThumbnails">Make Thumbnails?</label> <input id="makeThumbnails" type="checkbox" value="true" /> <br />-->
 <!--      <span id="thumbsEnabled" style="display: none;">-->
@@ -64,23 +116,22 @@
 	      <input type="file" id="picker" name="fileList" accept=".jpg,.png,.jpeg" multiple>
       </div>
     </div>
-      <button id="apply">Apply</button>
-      <br>
-	  <small><b>Compatibility:</b> Tested with pictures taken on recent-ish iPhones.  Must be exported with EXIF data (location data NOT required).  EXIF data is fully removed from results.</small>
-	  <br>
-	  <b><a href="#" style="display: none;" id="downloadAllBtn" onclick="downloadAll()">Download All</a></b>
+
+	  <b><button style="display: none;" id="downloadAllBtn">Download All</button>
+
       <hr>
-	  <ul id="listing">
+	  <div id="listing">
       <!--    IMAGES WILL GO HERE      -->
-      </ul>
+      </div>
 	</body>
 
     <script src="vendor/exif-reader.js"></script>
-    <script src="vendor/pica.js"></script>
+<!--    <script src="vendor/pica.js"></script>-->
+    <script src="vendor/moment.min.js"></script>
     <script src="exif.js"></script>
     <script>
 
-    const DownloadsRequested = [];
+
 
     window.addEventListener('load', function () {
         // document.getElementById('makeThumbnails').addEventListener('change', function() {
@@ -89,39 +140,6 @@
         // }, false);
     });
 
-    // Ugly but whatever, is purely client-side anyways
-    function checkEnableDownloadAllLink() {
-      let links = document.getElementsByClassName('downloadLink');
-      let btn = document.getElementById('downloadAllBtn');
-      if(links.length > 0) {
-        btn.style = "";
-        btn.innerHTML = "Download All ("+links.length+")";
-      } else {
-        btn.style = "display: none;";
-        btn.innerHTML = "Download All ("+links.length+")";
-      }
-    }
-
-    // Invoked 'download all' link is clicked
-    function downloadAll() {
-      let links = document.getElementsByClassName('downloadLink');
-      for(let x=0; x<links.length; x++) {
-        DownloadsRequested.push(links[x]);
-      }
-    }
-
-    // Chrome appears to throttle download clicks -- so we queue them & download at a (tight) interval
-    function processDownloadQueue() {
-      if(DownloadsRequested.length > 0) {
-        DownloadsRequested.pop().click(); // download 1
-      }
-    }
-
-    // Process queue every N timeframe
-    setInterval(function() {
-      checkEnableDownloadAllLink();
-      processDownloadQueue();
-    }, 250);
 
   </script>
 </html>
