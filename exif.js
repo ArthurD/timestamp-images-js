@@ -26,7 +26,11 @@
     function downloadAll() {
         let newDownloads = [];
         for(let x=0; x<ALL_LIST_ITEMS.length; x++) {
-            newDownloads.push(ALL_LIST_ITEMS[x].getElementsByClassName('downloadLink')[0]);
+            let link = ALL_LIST_ITEMS[x].getElementsByClassName('downloadLink')[0];
+            let originalFilename = link.getAttribute('download');
+            let fileExtension = originalFilename.split('.').pop();
+            link.setAttribute('download', "download_"+ (String(x).padStart(4, '0'))+"."+fileExtension);
+            newDownloads.push(link);
         }
         newDownloads.reverse();
         newDownloads.forEach((x) => DownloadsRequested.push(x));
